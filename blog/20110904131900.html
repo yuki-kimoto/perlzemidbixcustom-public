@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/giblog-logo.png">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<title>ユーティリティ - DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</title>
+<meta name="description" content="最後に実行されたSQLを取得するにはlast_sqlメソッドを使用します。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<div class="main">
+  <h1>
+    <a href="/">DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</a>
+  </h1>
+</div>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/">
+        <span itemprop="name">DBIx::Custom</span></a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li>
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20110904131900.html">ユーティリティ</a></h2>
+<h3>最後に実行されたSQLを取得する - last_sql</h3>
+<p>
+  最後に実行されたSQLを取得するには<strong>last_sql</strong>メソッドを使用します。
+</p>
+<pre>
+my $last_sql = $dbi-&gt;last_sql;
+</pre>
+<p>
+  デバッグを行うときに便利です。
+</p>
+<h3>実行されたSQLを確認する</h3>
+<p>
+  どのようなSQLが実際に実行されたのかを確認するには<strogn>DBIX_CUSTOM_DEBUG</strong>という環境変数に真の値(たとえば1)を設定します。標準エラー出力に実行されたSQLとバインドされた値が出力されます。
+</p>
+<pre>
+$ENV{DBIX_CUSTOM_DEBUG} = 1
+</pre>
+<h3>ヘルパーメソッドを登録する - helper</h3>
+<p>
+  ヘルパーメソッドを登録するには<strong>helper</strong>メソッドを使用します。
+</p>
+<pre>
+$dbi-&gt;helper(
+  find_or_create   =&gt; sub {
+    my $self = shift;
+    ...
+  }
+);
+</pre>
+<p>
+  登録したヘルパーメソッドはDBIx::Customオブジェクトから直接呼び出すことができます。
+</p>
+<pre>
+$dbi-&gt;find_or_create;
+</pre>
+<h3>パラメーターをマージする - merge_param</h3>
+<p>
+  二つのパラメータをマージするには<strong>merge_param</strong>メソッドを使用します。
+</p>
+<pre>
+my $param = $dbi-&gt;merge_param({key1 =&gt; 1}, {key1 =&gt; 1, key2 =&gt; 2});
+</pre>
+<p>
+  次のような新しいパラメータを取得します。同一のキーを含むときは、値は配列のリファレンスにマージされます。
+</p>
+<pre>
+{key1 =&gt; [1, 1], key2 =&gt; 2}
+</pre>
+<h3>DBIx::Customオブジェクトを生成する - new</h3>
+<p>
+  DBIx::Customオブジェクトを生成するには<strong>new</strong>メソッドを使用します。
+</p>
+<pre>
+my $dbi = DBIx::Custom-&gt;new(
+  dsn =&gt; "dbi:mysql:database=dbname",
+  user =&gt; 'ken',
+  password =&gt; '!LFKD%$&amp;',
+  option =&gt; {mysql_enable_utf8 =&gt; 1}
+);
+</pre>
+<p>
+  connectメソッドとの違いは、newメソッドは接続を行わないということです。オブジェクトを、生成した後に接続したい場合は、connectメソッドを呼んでください。
+</p>
+<pre>
+$dbi-&gt;connect;
+</pre>
+<h3>データベースハンドルを取得する - dbh</h3>
+<p>
+  データベースハンドルを取得するには<strong>dbh</strong>メソッドを使用します。
+</p>
+<pre>
+my $dbh = $dbi-&gt;dbh;
+</pre>
+<p>
+  もしconnectorにコネクションマネージャが設定されていた場合は、データベースハンドルはコネクションマネージャ経由で取得します。
+</p>
+<h3>テーブルの存在を確認する</h3>
+<p>
+  データベースにテーブルがすでに存在しているかを確認したい場合があります。そのような場合は、each_columnメソッドを使って、指定するテーブルがあるかを調べるのが簡単です。each_columnメソッドはすべての列を取得するメソッドですが、テーブルの情報も引数で受け取りますので、このような使い方もできます。
+</p>
+<pre>
+my $table_exists;
+$dbi-&gt;each_column(sub {
+  my ($dbi, $table, $column) = @_;
+  $table_exists = 1 if $table eq 'book';
+});
+</pre>
+<h3>Mojolicious::LiteとDBIx::CustomとDBD::mysqlを使ってnode.jsのようにノンブロッキングでDBにアクセスする</h3>
+<p>
+  DBIx::Customがまだ実験的な段階ですが、AnyEventの力を借りて、データベースに対してブロッキングせずにクエリを投げることができるようになりました。
+</p>
+<p>
+  5秒間待機するSQLを投げているのですが、複数のリクエストがあっても、ブロックせずにリクエストを処理することができます。これで、nodel.jsで行いたいようなデータベースに対してノンブロッキングでクエリを投げるということが、Perlでも簡単にできるようになりそうです。
+</p>
+<pre>
+use Mojolicious::Lite;
+use EV;
+use DBIx::Custom;
+
+my $dbi = DBIx::Custom-&gt;connect(
+  dsn =&gt; 'dbi:mysql:database=usertest',
+  user =&gt; 'root'
+);
+
+$dbi-&gt;async_conf({
+  prepare_attr =&gt; {async =&gt; 1},
+  fh =&gt; sub { shift-&gt;dbh-&gt;mysql_fd }
+});
+
+get '/' =&gt; sub {
+  my $self = shift;
+  
+  $self-&gt;render_later;
+  $dbi-&gt;select('SLEEP(5), 3', async =&gt; sub {
+    my ($dbi, $result) = @_;
+    my $row = $result-&gt;fetch_one;
+    $self-&gt;render(text =&gt; $row-&gt;[1]);
+  });
+};
+
+app-&gt;start;
+</pre>
+<p>
+  仕組みはこんな感じ。まずMojoliciousというのはノンブロッキングなHTTPサーバーを持っていて、内部実装としては中でIOのループをぐるぐると回している。MojoliciousはEVがあるときは、自前のMojo::IOLoopからEVを使ったIOループに切り替えることができる。DBIx::Customの中ではAnyEventを使って、イベントを登録している。EVを利用しているから、EVにイベントをどんどん登録する。Mojoliciousも自分のイベントをEVにどんどん登録する。ぐるぐるぐるーっと回って、IO待ちが終わったものから順に処理してくれる。
+</p>
+<p>
+  ただしこれは、まだ超実験的なだんかいなので、不具合がないかを試してみていただけるとうれしいです。
+</p>
+<h3>廃止予定のタグの解析機能を停止してパフォーマンスを上げる</h3>
+<p>
+  廃止予定の機能が削除されるまでは、後方互換性の維持の方針のために、DBIx::Customのパフォーマンスはデフォルトでは最適化されていません。以前はタグという機能を実装していたのですが、パフォーマンス上の理由のために、この機能は名前つきプレースホルダーに置き換えられました。
+</p>
+<p>
+  タグの解析機能を停止させるとDBIx::Customのパフォーマンスを少し上げることができます。
+</p>
+<pre>
+$ENV{DBIX_CUSTOM_TAG_PARSE} = 0;
+</pre>
+<p>
+  将来的には、他の多くの廃止予定の機能が取り除かれることで、パフォーマンスが全体的に若干向上します。
+</p>
+<h3>パラメーターをマッピングする - mapper</h3>
+<p>
+  URLから受け取ってきたパラメータを、データベース用のパラメータに変換するということをすることが多いと思います。このような場合はmapperメソッドを使ってDBIx::Custom::Mapperオブジェクトを作成してそれを利用します。
+</p>
+<pre>
+# マッパーの生成
+my $mapper = $dbi-&gt;mapper(param =&gt; $param);
+</pre>
+<p>
+  パラメータは次のようなものだとします。
+</p>
+<pre>
+{
+  t =&gt; 'Perl',
+  p =&gt; 1000,
+  a =&gt; 'Ken',
+  b =&gt; 'XXX'
+}
+</pre>
+<p>
+  mapメソッドを使うとパラメータのマッピングを行うことができます。
+</p>
+<pre>
+# マッピング
+my $new_param = $mapper-&gt;map(
+  t =&gt; [title =&gt; '%&lt;value&gt;'], # キーと値をマッピング
+  p =&gt; [price =&gt; '&lt;value&gt;'], # キーのみをマッピング
+  a =&gt; [a =&gt; '%&lt;value&gt;%'] # 値のみをマッピング
+);
+</pre>
+<p>
+  書式は以下のようになります。
+</p>
+<pre>
+元のキー名 =&gt; [新しいキー名 =&gt; 新しい値]
+</pre>
+<p>
+  元の値は<b>&lt;value&gt;</b>というフォーマットで表現できます。これを使って<b>%Perl</b>などの新しい値を作成することもできます。
+</p>
+<p>
+  次のようなパラメータにマッピングされます。
+</p>
+<pre>
+{
+  title =&gt; '%Perl',
+  price =&gt; 1000,
+  a =&gt; '%Ken%'
+}
+</pre>
+<p>
+  mapメソッドで指定されていないキーについてはマッピングされません。このサンプルではbというキーはマッピングされません。
+</p>
+<p>
+  値をもう少し柔軟に変更したい場合はサブルーチンのリファレンスを利用することができます。第一引数で元の値を取得できるので新しい値を返却します。
+</p>
+<pre>
+元のキー名 =&gt; [新しいキー名 =&gt; sub { return '%' . $_[0] . '%' }]
+</pre>
+<h4>パラメータのマッピングの条件</h4>
+<p>
+  デフォルトのマッピングの条件は次のとおりです。
+</p>
+<pre>
+値が定義されていて、長さがある
+</pre>
+<p>
+  ですから以下のようなパラメータはマッピングされます。
+</p>
+<pre>
+title =&gt; 'Perl',
+</pre>
+<p>
+  けれども、空の文字列や未定義値やキー自体が存在しないものはマッピングされません。これはマッピングがWebアプリケーションを想定しているので、このような仕様になっています。
+</p>
+<pre>
+title =&gt; '',
+title =&gt; undef
+</pre>
+<p>
+  この条件を変更するにはcondition属性を利用します。任意のサブルーチンのリファレンスか、特別な値として「length」「defined」「exists」という文字列を設定することができます。
+</p>
+<pre>
+$mapper-&gt;condition('length'); # デフォルトと同じ
+$mapper-&gt;condition('defined'); # 値が定義されている
+$mapper-&gt;condition('exists'); # キーが存在する
+$mapper-&gt;condition(sub { defined $_[0] }); #任意のサブルーチンのリファレンス
+</pre>
+<p>
+  mapメソッドで次のようにキーごとに個別に設定することも可能です。
+</p>
+<pre>
+$mapper-&gt;map(
+  古いキー =&gt; [新しいキー =&gt; 新しい値, {condtion =&gt; 'defined'}],
+);
+</pre>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    Side Bar
+  </div>
+  <ul>
+    <li><a href="/list.html">Entries</a></li>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="https://github.com/yuki-kimoto/giblog">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>

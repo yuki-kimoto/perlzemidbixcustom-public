@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/giblog-logo.png">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<title>order by句の生成 - DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</title>
+<meta name="description" content="DBIx::Custom::Orderクラスを利用するとorder by句を簡単に記述することができます。たとえば、デフォルトの順序を最初に指定しておいて、状況に応じて順序をカスタマイズすることが簡単にできます。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<div class="main">
+  <h1>
+    <a href="/">DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</a>
+  </h1>
+</div>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/">
+        <span itemprop="name">DBIx::Custom</span></a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li>
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20110928132041.html">order by句の生成</a></h2>
+<p>
+  <strong>DBIx::Custom::Order</strong>クラスを利用するとorder by句を簡単に記述することができます。たとえば、デフォルトの順序を最初に指定しておいて、状況に応じて順序をカスタマイズすることが簡単にできます。
+</p>
+<p>
+  DBIx::Custom::Orderオブジェクトを生成するには、orderメソッドを使用します。
+</p>
+<pre>
+my $order = $dbi-&gt;order;
+</pre>
+<p>
+  DBIx::Custom::Orderオブジェクトが取得できます。
+</p>
+<p>
+  並びを指定するにはprependメソッドを使用します。order by句のパーツが前へ前へと追加されていきます。
+</p>
+<pre>
+$order-&gt;prepend('title', 'price desc');
+$order-&gt;prepend('author desc');
+</pre>
+<p>
+  最終的にorder句で利用する文字列に変換するにはto_stringメソッドを利用するか、DBIx::Custom::Orderオブジェクトを文字列として評価します。
+</p>
+<pre>
+my $order_str = $order-&gt;to_string;
+my $order_str = "$order";
+</pre>
+<p>
+  次のようなorder句が生成されます。
+</p>
+<pre>
+order by author desc, title, price desc
+</pre>
+<p>
+  では次に同名の列名を含むものをさらにprependして見ましょう。
+</p>
+<pre>
+$order-&gt;prepend('price asc');
+</pre>
+<p>
+  この場合には、priceが二つ存在しますが、DBIx::Custom::Orderオブジェクトは、重複を適切に処理してくれます。後で追加されたものが優先されます。文字列化すると次のようなorder by句が生成されるのが確認できます。
+</p>
+<pre>
+order by price asc, author desc, title
+</pre>
+<p>
+  もし並びの順序が固定されている場合はDBIx::Custom::Orderオブジェクトを使わずに直接記述するのが簡単です。並びの順序を動的に変えたい場合にDBIx::Custom::Orderオブジェクトを利用しましょう。
+</p>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    Side Bar
+  </div>
+  <ul>
+    <li><a href="/list.html">Entries</a></li>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="https://github.com/yuki-kimoto/giblog">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>

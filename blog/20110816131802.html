@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/giblog-logo.png">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<title>モデルの作成 - DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</title>
+<meta name="description" content="DBIx::Customで「モデル」を利用する方法を解説します。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<div class="main">
+  <h1>
+    <a href="/">DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</a>
+  </h1>
+</div>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/">
+        <span itemprop="name">DBIx::Custom</span></a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li>
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20110816131802.html">モデルの作成</a></h2>
+<p>
+  DBIx::Customで「モデル」を利用する方法を解説します。
+</p>
+<h3>モデルを生成する - create_model</h3>
+<p>
+  モデルを作成するには<strong>create_model</strong>メソッドを使用します。
+</p>
+<pre>
+$dbi-&gt;create_model(
+  table =&gt; 'book',
+  primary_key =&gt; 'id',
+  join =&gt; [
+    'left outer join company on book.company_id = company.id'
+  ],
+  ctime =&gt; 'ctime',
+  mtime =&gt; 'mtime'
+);
+</pre>
+    
+<p>
+  モデルには、「<b>table</b> - テーブル名」「<b>primary_key</b> - プライマリーキー」「<b>join</b> - join節」「<b>ctime</b> - 作成日時」「<b>mtime</b> - 更新日時」などを設定しておくことができます。
+</p>
+<p>
+  これらはモデルから<b>insert</b>,<b>update</b>,<b>delete</b>,<b>select</b>メソッドを呼び出したときに自動的に利用されるようになります。
+</p>
+<h4>モデルの取得</h4>
+<p>
+  作成したモデルは<b>model</b>メソッドでテーブル名を指定して取得することができます。
+</p>
+<pre>
+my $book_model = $dbi-&gt;model('book');
+</pre>
+<p>
+  モデルは<b>DBIx::Custom::Model</b>オブジェクトです。モデルからは<b>DBIx::Custom::Model</b>が持つメソッドと、DBIx::Customが持つ全てのメソッドを呼び出すことができます。
+</p>
+<h4>モデルの利用</h4>
+<p>
+  モデルではinsert,update,delete,select,countなどのメソッドを利用することができます。table、primary_key、joinといったオプションを省略することができ記述が簡潔になります。
+</p>
+<pre>
+my $result = $model-&gt;select(
+  column =&gt; [
+    {company =&gt; [qw/name/]}
+  ]
+);
+</pre>
+<p>
+  またモデルからはDBIx::CustomあるいはDBIのすべてのメソッドを呼び出すことが可能です。
+</p>
+<h3>外部定義したモデルの取り込み - include_model</h3>
+<p>
+  外部で定義したモデルを、プログラムに取り込むにはinclude_modelメソッドを使用します。DBIx::Customではプログラムが大きくなってきたときに、モデルを外部に定義し、保守性を高めることができます。
+</p>
+<pre>
+$dbi-&gt;include_model('MyModel');
+</pre>
+<p>
+  この例ではMyModelという名前空間以下に属するすべてのモデルを取り込みます。またMyModelという名前のモジュールが必要であることにも注意してください。
+</p>
+<pre>
+lib / MyModel.pm
+    / MyModel / book.pm
+              / company.pm
+</pre>
+<h4>モデルのサンプル</h4>
+<p>
+  <b>MyModel</b>
+</p>
+<p>
+  MyModelは一般的には次のようになります。DBIx::Custom::Modelを継承するようにします。
+</p>
+<pre>
+package MyModel;
+use DBIx::Custom::Model -base;
+
+1;
+</pre>
+<p>
+  <b>-base</b>オプションは継承のためのオプションで、<b>Object::Simple</b>から引き継いでいます。
+</p>
+<p>
+  <b>MyModel::book</b>
+</p>
+<p>
+  MyModel::bookは次のようになります。MyModelを継承するようにします。
+</p>
+<pre>
+has primary_key =&gt; 'book_id';
+has ctime =&gt; 'created_time';
+has mtime =&gt; 'modified_time';
+
+has join =&gt; sub {
+  [
+    'left join company on book.company_id = company.id',
+    'left join author on book.author_id = author.id'
+  ]
+}
+
+1;
+</pre>
+<p>
+  <b>has</b>は属性を定義するためのメソッドで、<b>Object::Simple</b>の機能です。
+</p>
+<h3>モデルをセットアップする - setup_model</h3>
+<p>
+  モデルをセットアップするには<strong>setup_model</strong>を使用します。データベースのテーブル情報を調べて、モデル(DBIx::Custom::Model)のcolumnsに列名が自動的に設定されます。
+</p>
+<pre>
+$dbi-&gt;setup_model;
+</pre>
+<p>
+  DBIx::Custom::Modelの<b>columns</b>属性が設定されていれば、DBIx::Custom::Modelの<b>mycolumn</b>メソッドを使って、テーブルに含まれるすべての列を含むcolumn節を生成できます。
+</p>
+<pre>
+my $book_model = $dbi-&gt;model('book');
+my $column_clause = $book_model-&gt;mycolumn;
+</pre>
+  
+<p>
+  すべての列を含む次のようなcolumn節が生成されます。
+</p>
+<pre>
+book.author as author,
+book.title as title,
+book.price as price
+</pre>
+<p>
+  また列名を指定しないで、DBIx::Customの<b>column</b>メソッドを使うこともできます。
+</p>
+<pre>
+my $column_clause = $dbi-&gt;column('book');
+</pre>
+<p>
+  次のようなすべての列を含むcolumn節が生成されます。
+</p>
+<pre>
+book.author as "book.author",
+book.title as "book.title",
+book.price as "book.price"
+</pre>
+<h3>モデルを取得する - model</h3>
+<p>
+  <strong>model</strong>メソッドを使って、create_modelメソッドやinclude_modelメソッドで作成したモデルを取得することができます。
+</p>
+<pre>
+my $model = $dbi-&gt;model('book');
+</pre>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    Side Bar
+  </div>
+  <ul>
+    <li><a href="/list.html">Entries</a></li>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="https://github.com/yuki-kimoto/giblog">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>

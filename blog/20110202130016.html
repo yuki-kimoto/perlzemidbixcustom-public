@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/giblog-logo.png">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<title>deleteメソッドで行を削除 - DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</title>
+<meta name="description" content="テーブルの行を削除するにはdeleteメソッドを使用します。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<div class="main">
+  <h1>
+    <a href="/">DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</a>
+  </h1>
+</div>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/">
+        <span itemprop="name">DBIx::Custom</span></a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li>
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20110202130016.html">deleteメソッドで行を削除</a></h2>
+<p>
+  テーブルの行を削除するには<strong>delete</strong>メソッドを使用します。
+</p>
+<pre>
+$dbi-&gt;delete(
+  table =&gt; 'book',
+  where =&gt; {id =&gt; 1},
+);
+</pre>
+<p>
+  対象のテーブルを<strong>table</strong>で指定します。削除する行の条件を<strong>where</strong>で指定します。whereにはハッシュリファレンスか、DBIx::Custom::Whereオブジェクトを指定することができます。
+</p>
+<p>
+  次のようなSQLが発行されます。
+</p>
+<pre>
+delete from book where id = ?;
+</pre>
+<p>
+  対応する値がプレースホルダに埋め込まれます。
+</p>
+<h3>deleteメソッドのオプション</h3>
+<p>
+  deleteメソッドは「<a href="/blog/20110708131364.html">executeメソッド</a>」のすべてのオプションを使用することができます。また以下のオプションを実装しています。
+</p>
+<h4>IDによる条件の指定 id</h4>
+<p>
+  idオプションを使用すれば、IDによって条件を指定することができます。primary_keyが設定されている必要があります。
+</p>
+<pre>
+id =&gt; 4
+id =&gt; [4, 5]
+</pre>
+<p>
+  以下のようなdeleteを実行するとします。
+</p>
+<pre>
+
+$dbi-&gt;delete(
+  primary_key =&gt; ['id1', 'id2'],
+  id =&gt; [4, 5],
+  table =&gt; 'book',
+);
+</pre>
+<p>
+  これは以下のdeleteと同じになります。
+</p>
+<pre>
+$dbi-&gt;delete(where =&gt; {id1 =&gt; 4, id2 =&gt; 5}, table =&gt; 'book');
+</pre>
+<h4>プレフィックス prefix</h4>
+<p>
+  deleteとfrom tableの間に文字列を設定するにはprefixオプションを使用します。
+</p>
+<pre>
+prefix =&gt; 'some'
+</pre>
+<p>
+  たとえば以下のようなSQLが実行されます。
+</p>
+<pre>
+delete some from book
+</pre>
+<h4>テーブル名 table</h4>
+<p>
+  tableオプションでテーブル名を指定します。
+</p>
+<pre>
+table =&gt; 'book'
+</pre>
+<h4>Where句 where</h4>
+<p>
+  Where句を記述するにはwhereオプションを使用します。
+</p>
+<pre>
+where =&gt; {author =&gt; 'Ken', 'title' =&gt; 'Perl'}
+where =&gt; [
+  ['and', ':author{=}', ':title{like}'],
+  {author =&gt; 'Ken', title =&gt; '%Perl%'}
+]
+</pre>
+<p>
+  whereオプションの指定方法については「<a href="/blog/20110210130016.html">selectメソッド</a>」の「whereオプション」を見てください。Where句の生成の詳細については<a href="/blog/20110924132031.html">動的なWhere句の生成</a>を見てください。
+</p>
+<h3>すべての行の削除 delete_all</h3>
+<p>
+  テーブルのすべての行を削除するには<strong>delete_all</strong>メソッドを使用します。deleteメソッドでは安全のためすべての行を削除することができないので、delete_allメソッドを使用します。
+</p>
+<pre>
+$dbi-&gt;delete_all(table =&gt; 'book');
+</pre>
+<p>
+  対象のテーブルを<strong>table</strong>で指定します。
+</p>
+<p>
+  次のようなSQLが発行されます。
+</p>
+<pre>
+delete from book;
+</pre>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    Side Bar
+  </div>
+  <ul>
+    <li><a href="/list.html">Entries</a></li>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="https://github.com/yuki-kimoto/giblog">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/giblog-logo.png">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<title>selectメソッドで行を選択 - DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</title>
+<meta name="description" content="DBIx::Customで、行を選択するにはselectメソッドを使用します。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<div class="main">
+  <h1>
+    <a href="/">DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</a>
+  </h1>
+</div>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/">
+        <span itemprop="name">DBIx::Custom</span></a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li>
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20110210130016.html">selectメソッドで行を選択</a></h2>
+<p>
+  DBIx::Customで、行を選択するには<strong>select</strong>メソッドを使用します。
+</p>
+<pre>
+my $result = $dbi-&gt;select(table =&gt; 'book');
+</pre>
+<p>
+  tableにテーブル名を指定します。以下のSQLが発行されます。
+</p>
+<pre>
+select * from book;
+</pre>
+<p>
+  戻り値はDBIx::Custom::Resultオブジェクトで、このオブジェクトを使って行をフェッチすることができます。
+</p>
+<pre>
+while (my $row = $result-&gt;fetch_hash) {
+  print $row-&gt;{author} . "\n";
+  print $row-&gt;{title} . "\n";
+}
+</pre>
+<p>
+  <a href="/blog/20100123126425.html">while文</a>を使って、すべての行を1行づつ取り出しています。
+</p>
+<h3>selectメソッドのオプション</h3>
+<p>
+  selectメソッドでは<a href="/blog/20110916131923.html">executeメソッドのすべてのオプション</a>を使用することができます。加えて以下のオプションを実装しています。
+</p>
+<h3>列名 column</h3>
+<p>
+  列名を指定するにはcolumnオプションを使用します。
+</p>
+<pre>
+my $result = $dbi-&gt;select(
+  table =&gt; 'book',
+  column =&gt; [
+    'author',
+    'title'
+  ]
+);
+</pre>
+<p>
+  あるいは、selectメソッドの第一引数として列名を指定することもできます。
+</p>
+<pre>
+my $result = $dbi-&gt;select(['author', 'title'], table =&gt; 'book');
+</pre>
+<p>
+  次のようなSQLが発行されます。
+</p>
+<pre>
+select author, title from book;
+</pre>
+<h4>列名の指定 column</h4>
+<p>
+  columnオプションを使用するとさまざまな方法で列名を指定することができます。columnオプションを省略した場合はすべての列を表す「*」が列名として設定されます。
+</p>
+<p>
+  <b>(1)文字列</b>
+</p>
+<p>
+  文字列による指定です。
+</p>
+<pre>
+column =&gt; 'author'
+</pre>
+<p>
+  <b>(2)配列のリファレンス</b>
+</p>
+<p>
+  配列のリファレンスで複数の列を指定できます。
+</p>
+<pre>
+column =&gt; ['author', 'title']
+</pre>
+<p>
+  次のような列名が生成されます。
+</p>
+<pre>
+author, title
+</pre>
+<p>
+  <b>(3) ハッシュリファレンス</b>
+</p>
+<p>
+  ハッシュのリファレンスを使ってテーブル名と列名のセットを記述できます。
+</p>
+<pre>
+column =&gt; {book =&gt; [qw/title author]}
+</pre>
+<p>
+  次のような列名が生成されます。
+</p>
+<pre>
+book.author as "book.author",
+book.title as "book.title"
+</pre>
+<p>
+  エイリアスの部分はデータベースに応じて正しくエスケープされます。内部的にはcolumnメソッドを実行しています。
+</p>
+<p>
+  <b>(4)配列のリファレンスとハッシュのリファレンスの組み合わせ</b>
+</p>
+<p>
+  複数のハッシュリファレンスを配列のリファレンスの中に指定することもできます。
+</p>
+<pre>
+column =&gt; [
+  {book =&gt; [qw/title author]},
+  {company =&gt; [qw/id name/]}
+]
+</pre>
+<p>
+  次のような列名が生成されます。
+</p>
+<pre>
+book.author as "book.author",
+book.title as "book.title",
+company.id as "company.id",
+company.name as "company.name"
+</pre>
+<p>
+  次のように文字列とハッシュのリファレンスを配列のリファレンスの要素として混在させることもできます。
+</p>
+<pre>
+column =&gt; [
+  'title',
+  'author',
+  {company =&gt; [qw/id name/]}
+]
+</pre>
+<h4>IDによる条件の指定 id</h4>
+<p>
+  IDを使って条件を指定するにはidオプションを使用します。primary_keyが設定されている必要があります。
+</p>
+<pre>
+id =&gt; 4
+id =&gt; [4, 5]
+</pre>
+<p>
+  たとえば次のようなselectが実行されたとします。
+</p>
+<pre>|
+$dbi-&gt;select(
+  primary_key =&gt; ['id1', 'id2'],
+  id =&gt; [4, 5],
+  table =&gt; 'book'
+);
+</pre>
+<p>
+  これは次のselectと同じです。
+</p>
+<pre>
+$dbi-&gt;select(
+  where =&gt; {id1 =&gt; 4, id2 =&gt; 5},
+  table =&gt; 'book'
+);
+</pre>
+<h4>Join句 join</h4>
+<p>
+  join句を指定するにはjoinオプションを指定します。
+</p>
+<pre>
+join =&gt; 'left outer join company on book.company_id = company_id'
+join =&gt; [
+  'left outer join company on book.company_id = company_id',
+  'left outer join location on company.location_id = location.id'
+]
+</pre>
+<p>
+  DBIx::Customのjoin句は少し特別な実装がされていて注意が必要です。selectメソッドはcolumn句とwhere句に指定されているテーブル名を検索して必要なjoinを探索します。必要でないjoin句については、SQLの中には含まれません。
+</p>
+<p>
+  つまりcolumnオプションあるいはwhereオプションでテーブル名が見つからなかった場合はjoin句が連結されないので注意してください。
+</p>
+<p>
+  たとえば次のようなselectを実行したとします。
+</p>
+<pre>
+$dbi-&gt;select(
+  table =&gt; 'book',
+  column =&gt; ['company.location_id as location_id'],
+  where =&gt; {'company.name' =&gt; 'Orange'},
+  join =&gt; [
+    'left outer join company on book.company_id = company.id',
+    'left outer join location on company.location_id = location.id'
+  ]
+);
+</pre>
+<p>
+  上記ではcolumnオプションでcompanyというテーブル名が登場しています。一方locationというテーブル名はcolumnオプションにもwhereオプションにも登場していません。
+</p>
+<p>
+  ですのでjoin句の中でcompanyテーブルだけを連結する必要があり、locationテーブルは必要がありません。
+</p>
+<p>
+  それで次のようなSQLが生成されます。
+</p>
+<pre>
+select company.location_id as location_id
+from book
+  left outer join company on book.company_id = company.id
+where company.name = ?;
+</pre>
+<p>
+  selectメソッドはできるだけ自動的にテーブル名を探そうとしますが、複雑なjoin句の場合はできないこともあります。そのような場合は次のように文字列の代わりにハッシュのリファレンスを指定して、必要なテーブル名を明示します。
+</p>
+<pre>
+$dbi-&gt;select(
+  table =&gt; 'book',
+  column =&gt; ['company.location_id as location_id'],
+  where =&gt; {'company.name' =&gt; 'Orange'},
+  join =&gt; {
+    clause =&gt; 'left outer join location on company.location_id = location.id',
+    table =&gt; ['company', 'location']
+  }
+);
+</pre>
+<p>
+  一般的に言えば、join句の中には二つのテーブル名「テーブル名.列名」という形で含まれている必要があります。ですからusing句などを利用する場合はテーブル名が「テーブル名.列名」という形になっていませんので、明示的に指定する必要があります。
+</p>
+<p>
+  またテーブル名の順番は重要です。連結元のテーブルは左側に、連結先のテーブルは右側にある必要があります。
+</p>
+<pre>
+# 正しい例 連結元のbook(book.company_id)は左側に、連結先のcompany(company.id)は右側にある
+left outer join company on book.company_id = company.id
+
+# 間違った例 連結元のbook(book.company_id)は右側に、連結先のcompany(company.id)は左側にある
+left outer join company on company.id = book.company_id
+</pre>
+<p>
+  通常のSQL文にとってはどちらも意味が同じですが、DBIx::Customにとっては解析結果が異なります。
+</p>
+<p>
+  少し難しい解説でしたが、joinがそのまま記述できることと、必要なjoinだけを選んでくれるという利点はとても大きなものです。またjoin句を自然に記述すれば、解析が失敗するということはまずないと思います。
+</p>
+<h4>パラメーターの指定 param</h4>
+<p>
+  where句よりも前に出てくる名前付きプレースホルダーのために値を指定するにはparamオプションを使用します。
+</p>
+<pre>
+param =&gt; {'table2.key3' =&gt; 5}
+</pre>
+<p>
+  たとえばjoin句の中で名前付きプレースホルダーを利用したい場合に利用できるでしょう。
+</p>
+<pre>
+join  =&gt; ['inner join (select * from table2 where table2.key3 = :table2.key3)' . 
+          ' as table2 on table1.key1 = table2.key1']
+</pre>
+<h4>プレフィックス prefix</h4>
+<p>
+  selectの直後に文字列を追加したい場合はprefixを使用します。
+</p>
+<pre>
+prefix =&gt; 'SQL_CALC_FOUND_ROWS'
+</pre>
+<p>
+  たとえば以下のようなSQLを発行することができます。
+</p>
+<pre>
+select SQL_CALC_FOUND_ROWS * from book;
+</pre>
+<h4>テーブル名 table</h4>
+<p>
+  テーブル名を指定するにはtableオプションを使用します。
+</p>
+<pre>
+table =&gt; 'book'
+</pre>
+<h4>Where句 where</h4>
+<p>
+  Where句を記述するにはwhereオプションを使用します。
+</p>
+<pre>
+where =&gt; {author =&gt; 'Ken', 'title' =&gt; 'Perl'}
+where =&gt; [
+  ['and', ':author{=}', ':title{like}'],
+  {author =&gt; 'Ken', title =&gt; '%Perl%'}
+]
+</pre>
+<h3>whereオプション</h3>
+<p>
+  whereオプションですが、次のようにさまざまな形式で指定することが可能です。
+</p>
+<h4>ハッシュリファレンスによる指定</h4>
+<p>
+  ハッシュリファレンスでWhere句を指定した場合は、等価(=)による比較をandで結んだ条件になります。
+</p>
+<pre>
+where =&gt; {author =&gt; 'Ken', 'title' =&gt; 'Perl'}
+</pre>
+<p>
+  上記の指定は次のようなWhere句になります。
+</p>
+<pre>
+where author = :author and title = :title
+</pre>
+<p>
+  「Ken」と「Perl」は名前付きプレースホルダー(:author, :title)に埋め込まれます。
+</p>
+<p>
+  値として配列のリファレンスを指定すると<b>in</b>を使った記述が可能です。
+</p>
+<pre>
+where =&gt; {author =&gt; ['Ken', 'Taro'], 'title' =&gt; 'Perl'}
+</pre>
+<p>
+  上記は次のようなWhere区になります。
+</p>
+<pre>
+where author in (:author, :author) and title = :title
+</pre>
+<p>
+  対応する値は名前付きプレースホルダーに埋め込まれます。
+</p>
+<h4>DBIx::Custom::Whereオブジェクトによる指定</h4>
+<p>
+  DBIx::Custom::Whereオブジェクトを指定することができます。
+</p>
+<pre>
+where =&gt; $where_obj
+</pre>
+<p>
+  DBIx::Custom::Whereオブジェクトについては<a href="/blog/20110924132031.html">動的なWhere句の生成</a>を見てください。
+</p>
+<h4>配列のリファレンスによる指定</h4>
+<p>
+  配列のリファレンスによる指定を行うと、DBIx::Custom::Whereオブジェクトを生成することなしに、同様の指定を行うことができます。
+</p>
+<pre>
+where =&gt; [
+  ['and', ':author{=}', ':title{like}'],
+  {author =&gt; 'Ken', title =&gt; '%Perl%'}
+];
+</pre>
+<p>
+  上記は次の記述と同じ意味を持ちます。
+</p>
+<pre>
+where =&gt; $dbi-&gt;where(
+  clause =&gt; ['and', ':author{=}', ':title{like}'],
+  param =&gt; {author =&gt; 'Ken', title =&gt; '%Perl%'}
+);
+</pre>
+<h4>文字列による指定</h4>
+<p>
+  文字列で指定した場合は、単純なWhere句が生成されます。
+</p>
+<pre>
+where =&gt; 'title is null'
+</pre>
+<p>
+  上記の指定は次のようなWhere句になります。
+</p>
+<pre>
+where title is null
+</pre>
+<h3>行の件数を取得する - count</h3>
+<p>
+  行の件数を取得するには<strong>count</strong>メソッドを使用します。
+</p>
+<pre>
+my $count = $dbi-&gt;count(table =&gt; 'book', where =&gt; {title =&gt; 'Perl'});
+</pre>
+<p>
+  指定できるオプションはselectメソッドと同じものです。columnには自動的に「count(*)」が設定されます。
+</p>
+<p>
+  現在はcountメソッドよりもselectメソッドを使う方法がおすすめです。
+</p>
+<pre>
+my $count = $dbi-&gt;select(
+  'count(*)',
+  table =&gt; 'book',
+  where =&gt; {title =&gt; 'Perl'}
+)-&gt;value;
+</pre>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    Side Bar
+  </div>
+  <ul>
+    <li><a href="/list.html">Entries</a></li>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="https://github.com/yuki-kimoto/giblog">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>

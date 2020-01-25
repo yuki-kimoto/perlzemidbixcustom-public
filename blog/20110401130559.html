@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/giblog-logo.png">
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+
+<title>DBIx::Custom - SQLでデータベースに簡単アクセス - DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</title>
+<meta name="description" content="DBIx::Customは「insert,update,delete,select」などのデータベースへのクエリを簡単にするためモジュールです。O/Rマッパーとしては、覚えることが少なく、生のSQLに近い記述ができます。">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- header -->
+<div class="main">
+  <h1>
+    <a href="/">DBIx::Custom - Mojoliciousと使うPerlのO/Rマッパー</a>
+  </h1>
+</div>
+
+      </div>
+      <div class="main">
+        <div class="content">
+          <div class="entry">
+  <div class="top">
+    <!-- top -->
+
+  </div>
+  <div class="middle">
+    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/">
+        <span itemprop="name">Perl</span></a>
+    <meta itemprop="position" content="1" />
+  </li>
+  &#8250;
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/blog/20091116124667.html">
+        <span itemprop="name">モジュール</span></a>
+    <meta itemprop="position" content="2" />
+  </li>
+  &#8250;
+  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+    <a itemprop="item" href="/blog/20170130148603.html">
+      <span itemprop="name">データベース</span></a>
+    <meta itemprop="position" content="3" />
+  </li>
+  &#8250;
+  <li>
+    here
+  </li>
+</ol>
+<h2><a href="/blog/20110401130559.html">DBIx::Custom - SQLでデータベースに簡単アクセス</a></h2>
+<p>
+  <strong>DBIx::Custom</strong>は「insert,update,delete,select」などのデータベースへのクエリを簡単にするためモジュールです。<strong>O/Rマッパー</strong>としては、覚えることが少なく、生のSQLに近い記述ができます。
+</p>
+<p>
+  DBIx::Customは以下のような便利な機能を備えています。
+</p>
+<ul class="check-list">
+<ol>
+  <li>
+    insert, update, delete, selectを簡単に実行、高速insert文、バルクインサートサポート
+  </li>
+  <li>
+    柔軟なWhere句の生成、柔軟なorder by句の生成、名前つきプレースホルダのサポート
+  </li>
+  <li>
+    MySQL, PostgreSQL, SQLite, Oracle, Microsoft SQL Server, Microsoft Accessをサポート
+  </li>
+</ol>
+</ul>
+<p>
+  サンプルコードを見てください。
+</p>
+<pre>
+use DBIx::Custom;
+my $dbi = DBIx::Custom-&gt;connect(dsn =&gt; $dsn);
+
+# 挿入
+$dbi-&gt;insert({id =&gt; 1, title =&gt; 'Perl'}, table =&gt; 'book');
+
+# 更新
+$dbi-&gt;update({title =&gt; 'Perl'}, table =&gt; 'book', where =&gt; {id =&gt; 1});
+
+# 削除
+$dbi-&gt;delete(where =&gt; {id =&gt; 1}, table =&gt; 'book');
+
+# 選択
+my $rows = $dbi-&gt;select(table =&gt; 'book')-&gt;all;
+</pre>
+<p>
+  簡単に書けるでしょう。
+</p>
+<h3>インストール</h3>
+<p>
+  DBIx::Customを「インストール」してみましょう。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110508130736.html">DBIx::Customのインストール</a>
+  </li>
+</ul>
+<h3>データベースへの接続</h3>
+<p>
+  DBIx::Customで「データベース接続」する方法を解説しています。さまざまなデータベースでも利用することができます。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110516130787.html">データベースへ接続する</a>
+  </li>
+</ul>
+<h3>クエリの実行</h3>
+<p>
+  DBIx::Customでクエリを実行する方法を解説します。insert,update,delete,select文を覚えましょう。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110210130016.html">行の選択 select</a>
+  </li>
+  <li>
+    <a href="/blog/20110129130016.html">行の挿入 insert</a>
+  </li>
+  <li>
+    <a href="/blog/20110130130016.html">行の更新 update</a>
+  </li>
+  <li>
+    <a href="/blog/20110202130016.html">行の削除 delete</a>
+  </li>
+  <li>
+    <a href="/blog/20110708131364.html">SQLを実行する execute</a>
+  </li>
+</ul>
+<h3>行のフェッチ</h3>
+<p>
+  DBIx::Customで「行をフェッチ」する方法を解説します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110709131364.html">行をフェッチする</a>
+  </li>
+</ul>
+<h3>Where句の動的な作成</h3>
+<p>
+  DBIx::Customで「動的にwhere句を作成」する方法を解説します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110924132031.html">動的にWhere句の生成する</a>
+  </li>
+</ul>
+<h3>Order By句の動的な生成</h3>
+<p>
+  DBIx::Customで「動的にorder by句を作成」する方法を解説します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110928132041.html">Order By句の生成</a>
+  </li>
+</ul>
+<h3>モデル</h3>
+<p>
+  DBIx::Customで「モデル」を利用する方法を解説します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110816131802.html">「モデル」を利用する</a>
+  </li>
+</ul>
+<h3>応用的な機能</h3>
+<p>
+  DBIx::Customの「応用的な機能」について紹介します。
+</p>
+<h4>SQLの生成</h4>
+<p>
+  DBIx::Customで「SQLを生成」するための便利なメソッドを紹介します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110812131778.html">DBIx::Customで「SQLを生成」するためのメソッドの紹介</a>
+  </li>
+</ul>
+<h4>フィルタリング</h4>
+<p>
+  DBIx::Customで「フィルタリング」を利用する方法を解説します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110926132031.html">「フィルタリング」を利用する</a>
+  </li>
+</ul>
+<h4>テーブルと列の情報</h4>
+<p>
+  DBIx::Customの「テーブルと列の情報」を調べるメソッドを紹介します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110911131900.html">DBIx::Customの「テーブル」と「列」の情報を調べるメソッド</a>
+  </li>
+</ul>
+<h4>ユーティリティ</h4>
+<p>
+  DBIx::Customの「ユーティリティ」メソッドを紹介します。
+</p>
+<ul>
+  <li>
+    <a href="/blog/20110904131900.html">DBIx::Customの「ユーティリティ」メソッドの紹介</a>
+  </li>
+</ul>
+
+  </div>
+  <div class="bottom">
+    <!-- bottom -->
+
+  </div>
+</div>
+
+        </div>
+        <div class="side">
+          <!-- side -->
+<div class="side-list">
+  <div class="side-list-title">
+    Side Bar
+  </div>
+  <ul>
+    <li><a href="/list.html">Entries</a></li>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+</div>
+
+        </div>
+      </div>
+      <div class="footer">
+        <!-- footer -->
+<a href="https://github.com/yuki-kimoto/giblog">Giblog</a>
+
+      </div>
+    </div>
+  </body>
+</html>
