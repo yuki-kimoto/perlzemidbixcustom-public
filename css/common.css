@@ -38,7 +38,7 @@
   
   /* main */
   .main {
-    max-width:960px;
+    max-width:1080px;
     width:100%;
     margin: 0 auto;
     padding:0 5px;
@@ -51,8 +51,8 @@
   
   /* content */
   .content {
-    float:left;
-    width:calc(100% - 280px - 30px);
+    float:right;
+    width:calc(100% - 240px - 30px);
   }
   
   /* entry */
@@ -68,8 +68,8 @@
   /* side */
   .side {
     float:left;
-    width:280px;
-    margin-left:30px;
+    width:240px;
+    margin-right:30px;
     padding-top:16px;
   }
   
