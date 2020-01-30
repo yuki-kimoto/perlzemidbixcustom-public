@@ -7,6 +7,9 @@
     box-sizing: border-box;
     -webkit-text-size-adjust:100%;
   }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3", "Segoe UI", "メイリオ", "Meiryo",sans-serif;
+  }
   a, a:visited {
     color:#0000EE;
   }
