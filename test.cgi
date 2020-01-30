@@ -121,6 +121,9 @@
   </div>
   <div class="bottom">
     <!-- bottom -->
+<div class="to_top">
+  <a class="js_to_top" title="上へ" onclick="$('body, html').animate({scrollTop: 0},100, 'linear');">&#x25B2</a>
+</div>
 
   </div>
 </div>
@@ -153,7 +156,7 @@
       </div>
       <div class="footer">
         <!-- footer -->
-<a href="https://jp.giblog.net/">このサイトはGiblogを使って作られています</a>
+<a href="https://jp.giblog.net/">Created by Giblog</a>
 
       </div>
     </div>

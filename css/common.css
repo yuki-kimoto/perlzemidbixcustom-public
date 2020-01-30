@@ -16,10 +16,12 @@
   
   /* header */
   .header {
+    position:fixed;
+    width:100%;
     margin:0 auto;
     background:#fff;
     border-bottom:1px solid #D9D9D0;
-    height:70px;
+    height:55px;
   }
   
   /* footer */
@@ -29,6 +31,7 @@
     padding:15px 0;
     border-top:1px solid #ccc;
     height:53px;
+    margin-top:15px;
   }
   .footer a, .footer a:visited {
     color:white;
@@ -43,6 +46,7 @@
   .main {
     width:100%;
     margin: 0 auto;
+    padding-top:55px;
   }
   .main:after {
     content:"";
@@ -54,11 +58,8 @@
   .content {
     float:right;
     width:calc(100% - 270px - 20px);
-    height:calc(100vh - 70px - 53px);
-    overflow:auto;
     padding-top:5px;
     padding-right:30px;
-    padding-bottom:50px;
   }
   
   /* entry */
@@ -75,20 +76,18 @@
   .side {
     float:left;
     width:270px;
-    padding-top:20px;
+    padding-top:12px;
     padding-left:30px;
-    height:calc(100vh - 70px - 53px);
-    overflow:auto;
   }
   
   /* tags */
   h1 {
     max-width:1020px;
     width:100%;
-    font-size:28px;
-    padding:16px 10px 0 73px;
-    background:url(/images/dbix_custom_logo.png) no-repeat 18px 8px;
-    background-size:48px;
+    font-size:26px;
+    padding:9px 10px 0 78px;
+    background:url(/images/dbix_custom_logo.png) no-repeat 30px 3px;
+    background-size:43px;
     height:100%;
   }
   h1 a, h1 a:visited {
@@ -112,7 +111,7 @@
     padding:16px 0px 15px 18px;
     letter-spacing:0.5px;
     margin:15px 0 10px 0;
-    background:#F5F5F9;
+    background:#F3F3Fa;
     margin-top:40px;
     color:#3c3c33;
   }
@@ -182,7 +181,7 @@
     background:#0070C0;
     color:white;
     font-weight:bold;
-    padding: 12px 0px 10px 0px;
+    padding: 11px 0px 9px 0px;
     text-align:center;
     border:1px solid #0070C0;
     border-bottom:none;
@@ -236,7 +235,25 @@
     width:22px;
     vertical-align:-3px;
   }
-
+  
+  .to_top {
+    display:flex;
+    justify-content:center;
+    margin-top:30px;
+  }
+  .to_top a {
+    display:block;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:#eeeeff;
+    border:1px solid #30a0F0;
+    text-align:center;
+    padding-top:10px;
+    cursor:pointer;
+    color:#0070C0;
+    font-size:18px;
+  }
 /* Tablet and Smart phone */
 @media only screen and (max-width:960px) {
   .content {
@@ -272,4 +289,12 @@
   .side-list li:last-child {
     border-bottom:none;
   }
+  /* tags */
+  h1 {
+    padding-left:60px;
+    background-position:10px 5px;
+    background-size:41px;
+    height:100%;
+  }
+
 }
