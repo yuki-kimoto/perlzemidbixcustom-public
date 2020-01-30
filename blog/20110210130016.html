@@ -7,6 +7,26 @@
 <link rel="icon" type="image/x-icon" href="/images/dibx_custom_logo.png">
 <link rel="stylesheet" type="text/css" href="/css/common.css">
 
+<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<link  type="text/css" rel="stylesheet" href="/js/google-code-prettify/prettify.css"/>
+<script>
+  $(function(){
+    // google code prettifyの有効化
+    $("pre").addClass("prettyprint");
+    function init(event){
+      prettyPrint();
+    }
+    if(window.addEventListener)window.addEventListener("load",init,false);
+    else if(window.attachEvent)window.attachEvent("onload",init);
+    
+    $(".to-top").click(function() {
+      // ページの一番上までスクロールさせます。
+      $('body, html').animate({scrollTop: 0}, 300, 'linear');;
+    });
+  });
+</script>
+
 <title>selectメソッドで行を選択 - DBIx::Custom - SQLの実行が簡単なPerlのO/Rマッパー</title>
 <meta name="description" content="DBIx::Customで、行を選択するにはselectメソッドを使用します。">
   </head>
@@ -432,12 +452,13 @@ my $count = $dbi-&gt;select(
           <!-- side -->
 <div class="side-list">
   <div class="side-list-title">
-    使い方
+    ドキュメント
   </div>
   <ul>
     <li><a href="/blog/20200126081842.html">DBIx::Customとは</a></li>
     <li><a href="/blog/20110508130736.html">インストール</a></li>
     <li><a href="/blog/20110516130787.html">データベースへの接続</a></li>
+    <li><a href="/blog/20110816131802.html">モデルの作成</a></li>
     <li><a href="/blog/20110210130016.html">select - 行の選択</a></li>
     <li><a href="/blog/20110129130016.html">insert - 行の挿入</a></li>
     <li><a href="/blog/20110130130016.html">update - 行の更新</a></li>
