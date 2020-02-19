@@ -28,7 +28,7 @@
 </script>
 
 <title>DBIx::Customのインストール - DBIx::Custom - SQLの実行が簡単なPerlのO/Rマッパー</title>
-<meta name="description" content="DBIx::Customをインストールにはcpanコマンドを使用します。">
+<meta name="description" content="DBIx::Customをインストールにはcpanmあるいは、cpanコマンドを使用します。">
   </head>
   <body>
     <div class="container">
@@ -47,36 +47,27 @@
 
   </div>
   <div class="middle">
-    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
-  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-    <a itemprop="item" href="/">
-      <img src="/images/home_icon.png" title="DBIx::Custom">
-    </a>
-    <meta itemprop="position" content="1" />
-  </li>
-  &#8250;
-  <li>
-    here
-  </li>
-</ol>
-<h2><a href="/blog/20110508130736.html">DBIx::Customのインストール</a></h2>
+    <h2><a href="/blog/20110508130736.html">DBIx::Customのインストール</a></h2>
 <p>
-  DBIx::Customをインストールにはcpanコマンドを使用します。
+  DBIx::Customをインストールにはcpanmあるいは、cpanコマンドを使用します。
 </p>
 <pre>
+# cpanm
+cpanm DBIx::Custom
+
+# cpan
 cpan DBIx::Custom
 </pre>
 <p>
-  WindowsでもUnix系のOSでもインストールすることができます。cpanコマンドではルート権限がないインストールを行うことができませんので、ユーザーのローカル環境にインストールしたい場合はcpanmなどのツールを使用してください。
+  <a href="https://tutorial.perlzemi.com/blog/20110220130464.html">perlbrew</a>や<a href="https://tutorial.perlzemi.com/blog/20180816153437.html">plenv</a>のインストールのときに<a href="https://tutorial.perlzemi.com/blog/20101027127859.html">cpanm</a>をインストールした場合はcpanmを使います。
+</p>
+<p>
+  <a href="https://tutorial.perlzemi.com/blog/20180808153368.html">Strawberry Perl</a>や<a href="https://tutorial.perlzemi.com/blog/20080602121231.html">Active Perl</a>、<a href="https://tutorial.perlzemi.com/blog/20180806153350.html">msys2</a>でPerlをインストールした場合は<a href="https://tutorial.perlzemi.com/blog/20100504127089.html">cpan</a>を使いましょう。
 </p>
 
   </div>
   <div class="bottom">
-    <!-- bottom -->
-<div class="to_top">
-  <a class="js_to_top" title="上へ" onclick="$('body, html').animate({scrollTop: 0},100, 'linear');">&#x25B2</a>
-</div>
-
+    
   </div>
 </div>
 
@@ -88,7 +79,6 @@ cpan DBIx::Custom
     ドキュメント
   </div>
   <ul>
-    <li><a href="/blog/20200126081842.html">DBIx::Customとは</a></li>
     <li><a href="/blog/20110508130736.html">インストール</a></li>
     <li><a href="/blog/20110516130787.html">データベースへの接続</a></li>
     <li><a href="/blog/20110816131802.html">モデルの作成</a></li>
@@ -103,12 +93,22 @@ cpan DBIx::Custom
   </ul>
 </div>
 
+<div class="side-list" style="margin-top:30px;">
+  <div class="side-list-title">
+    案内
+  </div>
+  <ul>
+    <li><a href="https://web.perlzemi.com/">DBIx::CustomをWeb開発で実践するならMojoliciousスタートアップ</a></li>
+    <li><a href="https://tutorial.perlzemi.com/">Perlをもっと理解したいならPerl入門ゼミ</a></li>
+  </ul>
+</div>
+
 
         </div>
       </div>
       <div class="footer">
         <!-- footer -->
-<a href="https://jp.giblog.net/">Created by Giblog</a>
+<a href="https://kimoto-system.co.jp/">サイト運営 木本システム <br>Copyright © 2020-2020 Yuki Kimoto</a>
 
       </div>
     </div>

@@ -30,11 +30,13 @@
     text-align:center;
     padding:15px 0;
     border-top:1px solid #ccc;
-    height:53px;
     margin-top:15px;
   }
   .footer a, .footer a:visited {
     color:white;
+    text-decoration:none;
+    width:100%;
+    display:block;
   }
   
   /* container */
@@ -56,10 +58,10 @@
   
   /* content */
   .content {
-    float:right;
+    float:left;
     width:calc(100% - 270px - 20px);
     padding-top:5px;
-    padding-right:30px;
+    padding-left:30px;
   }
   
   /* entry */
@@ -74,10 +76,10 @@
   
   /* side */
   .side {
-    float:left;
+    float:right;
     width:270px;
     padding-top:12px;
-    padding-left:30px;
+    padding-right:30px;
   }
   
   /* tags */
