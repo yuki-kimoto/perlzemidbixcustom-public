@@ -75,7 +75,7 @@ $dbi-&gt;create_model(
 <p>
   このサンプルでは、joinでは、会社テーブルと著者テーブルを結合しています。
 </p>
-<h4>モデルの取得</h4>
+<h3>モデルの取得</h3>
 <p>
   作成したモデルは<b>model</b>メソッドでテーブル名を指定して取得することができます。
 </p>
@@ -104,7 +104,7 @@ $dbi-&gt;model('book')-&gt;delete_all;
 # select
 my $rows = $dbi-&gt;model('book')-&gt;select(where =&gt; {id =&gt; 1})-&gt;all;
 </pre>
-<h4>join句とフィールド名の取得の組み合わせ</h4>
+<h3>join句とフィールド名の取得の組み合わせ</h3>
 <p>
   モデルを利用するとフィールド名を自動的に取得することができます。たとえば、bookテーブルにcompanyテーブルをjoinで結合して情報を取得する場合です。
 </p>
