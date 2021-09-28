@@ -4,7 +4,7 @@
     <!-- meta -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-<link rel="icon" type="image/x-icon" href="/images/dibx_custom_logo.png">
+<link rel="icon" type="image/x-icon" href="/images/logo.png">
 <link rel="stylesheet" type="text/css" href="/css/common.css">
 
 <script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
