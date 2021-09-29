@@ -33,10 +33,14 @@
   <body>
     <div class="container">
       <div class="header">
-        <!-- header -->
-<h1>
-  <a href="/">DBIx::Custom<span class="hide-smartphone"> - SQLの実行が簡単なPerlのO/Rマッパー</span></a>
-</h1>
+        <div class="header_main">
+  <h1>
+    <a href="/"><img src="/images/logo.png">DBIx::Custom</a>
+  </h1>
+  <div class="header_right">
+    <a rel="nofollow" href="https://perlclub.net/account/create">会員登録</a>
+  </div>
+</div>
 
       </div>
       <div class="main">
