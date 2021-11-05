@@ -60,18 +60,19 @@
 
   </div>
   <div class="middle">
-    <ol class="bread" itemscope itemtype="http://schema.org/BreadcrumbList">
-  <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-    <a itemprop="item" href="/">
-      <img src="/images/home_icon.png" title="DBIx::Custom">
-    </a>
-    <meta itemprop="position" content="1" />
-  </li>
-  &#8250;
-  <li>
-    here
-  </li>
-</ol>
+    <div class="bread">
+  <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+      <a itemprop="item" href="/">
+        <span itemprop="name">DBIx::Custom</span>
+      </a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li>
+      here
+    </li>
+  </ul>
+</div>
 <h2><a href="/blog/20110924132031.html">動的にwhere句を作成する</a></h2>
 <p>
   DBIx::Customで「動的にwhere句を作成」する方法を解説します。
